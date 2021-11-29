@@ -31,6 +31,7 @@ class LoremPicsumViewModel {
         let imageFetchStartDate = Date()
 
         repository.getRandomImage { response in
+            // fetch metadata
             self.parseIdAndFetchDetails(response)
  
             // display image
@@ -45,14 +46,12 @@ class LoremPicsumViewModel {
 
     }
     
-    private func initDateTimeDisplayTimer() {
-        self.dateTimeDisplayTimer = SelfInvalidatingTimer(seconds: 1, repeats: true, closure: { [weak self] in
-            guard let _self = self else {return}
-            let dateTime = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short)
-            _self.dateStringRx.accept(dateTime)
-        })
-    }
+}
+
+// MARK: - image details
+extension LoremPicsumViewModel {
     
+    /** Pull image id from response header and fetch metadata */
     private func parseIdAndFetchDetails(_ response: AFDataResponse<Image>) {
         // parse image id from http header
         let PICSUM_ID_KEY = "picsum-id"
@@ -62,6 +61,7 @@ class LoremPicsumViewModel {
     }
     
     
+    /** Fetch metadata for imageId */
     private func getImageDetails(for imageId: Int) {
         repository.getImageDetails(for: imageId) { result in
             switch result {
@@ -73,9 +73,25 @@ class LoremPicsumViewModel {
         }
     }
     
+}
+
+// MARK: - time displays
+extension LoremPicsumViewModel {
+    
+    /** Derive current timestamp and update observable once per second */
+    private func initDateTimeDisplayTimer() {
+        self.dateTimeDisplayTimer = SelfInvalidatingTimer(seconds: 1, repeats: true, closure: { [weak self] in
+            guard let _self = self else {return}
+            let dateTime = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short)
+            _self.dateStringRx.accept(dateTime)
+        })
+    }
+    
+    /** Compute time difference and update observable */
     private func updateLoadTime(relativeTo startDate: Date) {
         let imageFetchDuration = Date().timeIntervalSince(startDate)
         let roundedDuration = round(imageFetchDuration * 1000) / 1000.0
         self.loadTimeRx.accept("\(roundedDuration) seconds")
     }
+    
 }
