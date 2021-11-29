@@ -10,7 +10,6 @@ import RxCocoa
 import Alamofire
 import AlamofireImage
 
-// todo: display hstack subclasses for metadata, spinners, better ui/ux, date display
 class LoremPicsumViewModel {
 
     let repository = ImageRepository()
