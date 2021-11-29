@@ -13,7 +13,7 @@ import AlamofireImage
 // todo: display hstack subclasses for metadata, spinners, better ui/ux, date display
 class LoremPicsumViewModel {
 
-    let network = NetworkService()
+    let repository = ImageRepository()
     
     // MARK: - observables
     let dateStringRx = BehaviorRelay<String?>(value: " ")
@@ -31,7 +31,7 @@ class LoremPicsumViewModel {
         // for load duration calculation
         let imageFetchStartDate = Date()
 
-        network.getRandomImage { response in
+        repository.getRandomImage { response in
             self.parseIdAndFetchDetails(response)
  
             // display image
@@ -59,14 +59,12 @@ class LoremPicsumViewModel {
         let PICSUM_ID_KEY = "picsum-id"
         guard let headerDict = response.response?.headers.dictionary else {return}
         guard let imageIdString = headerDict[PICSUM_ID_KEY], let imageId = Int(imageIdString) else {return}
-        self.getInfo(for: imageId)
+        self.getImageDetails(for: imageId)
     }
     
     
-    private func getInfo(for imageId: Int) {
-        let url = "https://picsum.photos/id/\(imageId)/info"
-        
-        network.get(url: url) { (result: Result<PicsumImageDetails, Error>) in
+    private func getImageDetails(for imageId: Int) {
+        repository.getImageDetails(for: imageId) { result in
             switch result {
             case .success(let imageDetails):
                 self.imageDetailsRx.accept(imageDetails)
