@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  LoremPicsum
 //
-//  Created by LUM on 11/20/21.
+//  Created by Cade May on 11/20/21.
 //
 
 import UIKit

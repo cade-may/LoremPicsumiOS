@@ -2,7 +2,7 @@
 //  MetadataLabelsView.swift
 //  LoremPicsum
 //
-//  Created by LUM on 11/28/21.
+//  Created by Cade May on 11/28/21.
 //
 
 import UIKit

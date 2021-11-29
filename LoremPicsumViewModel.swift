@@ -2,7 +2,7 @@
 //  LoremPicsumViewModel.swift
 //  LoremPicsum
 //
-//  Created by LUM on 11/20/21.
+//  Created by Cade May on 11/20/21.
 //
 
 import RxSwift
@@ -78,19 +78,5 @@ class LoremPicsumViewModel {
         let imageFetchDuration = Date().timeIntervalSince(startDate)
         let roundedDuration = round(imageFetchDuration * 1000) / 1000.0
         self.loadTimeRx.accept("\(roundedDuration) seconds")
-    }
-}
-
-class SelfInvalidatingTimer {
-    let timer: Timer
-    
-    init(seconds: TimeInterval, repeats: Bool, closure: @escaping () -> ()) {
-        timer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: repeats, block: { _ in
-            closure();
-        })
-    }
-    
-    deinit {
-        timer.invalidate()
     }
 }
