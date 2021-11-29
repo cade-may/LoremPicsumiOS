@@ -40,7 +40,7 @@ class LoremPicsumViewModel {
                     self.imageRx.accept(image)
                 self.updateLoadTime(relativeTo: imageFetchStartDate)
                 case .failure(let afError):
-                    print("failed")
+                    print("error: \(afError.errorDescription ?? "failed to load image")")
             }
         }
 
@@ -68,7 +68,7 @@ extension LoremPicsumViewModel {
             case .success(let imageDetails):
                 self.imageDetailsRx.accept(imageDetails)
             case .failure(let error):
-                print("we have an error! \(error)")
+                print("error: \(error.localizedDescription)")
             }
         }
     }
