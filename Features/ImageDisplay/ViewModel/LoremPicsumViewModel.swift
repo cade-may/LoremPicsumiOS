@@ -20,7 +20,7 @@ class LoremPicsumViewModel {
     let imageDetailsRx = BehaviorRelay<PicsumImageDetails?>(value: nil)
     let loadTimeRx = BehaviorRelay<String?>(value: " ")
     let errorRx = BehaviorRelay<String?>(value: nil)
-    let isLoadingRx = BehaviorRelay<Bool>(value: true)
+    let isLoadingRx = BehaviorRelay<Bool>(value: false)
 
     private var dateTimeDisplayTimer: SelfInvalidatingTimer?
     
@@ -29,6 +29,9 @@ class LoremPicsumViewModel {
     }
 
     func fetchRandomImage() {
+        // prevent rapid api calls
+        guard self.isLoadingRx.value == false else {return}
+        
         // for load duration calculation
         let imageFetchStartDate = Date()
         
@@ -48,6 +51,7 @@ class LoremPicsumViewModel {
                 case .failure(let afError):
                     let errorString = "Error: \(afError.errorDescription ?? "Failed to load image")"
                     self.errorRx.accept(errorString)
+                    self.isLoadingRx.accept(false)
             }
         }
 
