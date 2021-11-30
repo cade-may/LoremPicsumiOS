@@ -20,12 +20,20 @@ class LoremPicsumViewController: UIViewController {
         return view
     }()
     
+    let spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .large)
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        return spinner
+    }()
+    
 }
 
 // MARK: - overrides
 extension LoremPicsumViewController {
+    
     override func loadView() {
         self.view = self.mainPicsumView
+        self.addSpinner()
     }
     
     override func viewDidLoad() {
@@ -46,12 +54,21 @@ extension LoremPicsumViewController {
         self.observeImage()
         self.observeErrors()
         self.observeLoadTime()
+        self.observeLoadingState()
         self.observeImageDetails()
     }
     
     private func initGestures() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.fetchDataAction))
         self.mainPicsumView.mainImageView.addGestureRecognizer(tapGesture)
+    }
+    
+    private func addSpinner() {
+        self.view.addSubview(self.spinner)
+        NSLayoutConstraint.activate([
+            self.spinner.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            self.spinner.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+        ])
     }
 }
 
@@ -119,6 +136,21 @@ extension LoremPicsumViewController {
                 }
             }
 
+        } onError: { err in
+            print(err.localizedDescription)
+        }.disposed(by: self.disposeBag)
+    }
+    
+    private func observeLoadingState() {
+        self.viewModel.isLoadingRx.subscribe { isLoading in
+            DispatchQueue.main.async { [weak self] in
+                guard let _self = self else {return}
+                if isLoading {
+                    _self.spinner.startAnimating()
+                } else {
+                    _self.spinner.stopAnimating()
+                }
+            }
         } onError: { err in
             print(err.localizedDescription)
         }.disposed(by: self.disposeBag)

@@ -20,6 +20,7 @@ class LoremPicsumViewModel {
     let imageDetailsRx = BehaviorRelay<PicsumImageDetails?>(value: nil)
     let loadTimeRx = BehaviorRelay<String?>(value: " ")
     let errorRx = BehaviorRelay<String?>(value: nil)
+    let isLoadingRx = BehaviorRelay<Bool>(value: true)
 
     private var dateTimeDisplayTimer: SelfInvalidatingTimer?
     
@@ -30,6 +31,9 @@ class LoremPicsumViewModel {
     func fetchRandomImage() {
         // for load duration calculation
         let imageFetchStartDate = Date()
+        
+        // show spinner
+        self.isLoadingRx.accept(true)
 
         repository.getRandomImage { response in
             // fetch metadata
@@ -58,8 +62,12 @@ extension LoremPicsumViewModel {
     private func parseIdAndFetchDetails(_ response: AFDataResponse<Image>) {
         // parse image id from http header
         let PICSUM_ID_KEY = "picsum-id"
-        guard let headerDict = response.response?.headers.dictionary else {return}
-        guard let imageIdString = headerDict[PICSUM_ID_KEY], let imageId = Int(imageIdString) else {return}
+        guard let headerDict = response.response?.headers.dictionary,
+              let imageIdString = headerDict[PICSUM_ID_KEY],
+              let imageId = Int(imageIdString) else {
+                  self.isLoadingRx.accept(false)
+                  return
+              }
         self.getImageDetails(for: imageId)
     }
     
@@ -71,9 +79,11 @@ extension LoremPicsumViewModel {
             case .success(let imageDetails):
                 self.imageDetailsRx.accept(imageDetails)
                 self.errorRx.accept(nil)
+                self.isLoadingRx.accept(false)
             case .failure(let error):
                 let errorString = "Metadata error: \(error.localizedDescription)"
                 self.errorRx.accept(errorString)
+                self.isLoadingRx.accept(false)
             }
         }
     }
