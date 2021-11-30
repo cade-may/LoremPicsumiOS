@@ -19,6 +19,7 @@ class LoremPicsumViewModel {
     let imageRx = BehaviorRelay<UIImage?>(value: nil)
     let imageDetailsRx = BehaviorRelay<PicsumImageDetails?>(value: nil)
     let loadTimeRx = BehaviorRelay<String?>(value: " ")
+    let errorRx = BehaviorRelay<String?>(value: nil)
 
     private var dateTimeDisplayTimer: SelfInvalidatingTimer?
     
@@ -38,9 +39,11 @@ class LoremPicsumViewModel {
             switch response.result {
                 case .success(let image):
                     self.imageRx.accept(image)
-                self.updateLoadTime(relativeTo: imageFetchStartDate)
+                    self.updateLoadTime(relativeTo: imageFetchStartDate)
+                    self.errorRx.accept(nil)
                 case .failure(let afError):
-                    print("error: \(afError.errorDescription ?? "failed to load image")")
+                    let errorString = "Error: \(afError.errorDescription ?? "Failed to load image")"
+                    self.errorRx.accept(errorString)
             }
         }
 
@@ -67,8 +70,10 @@ extension LoremPicsumViewModel {
             switch result {
             case .success(let imageDetails):
                 self.imageDetailsRx.accept(imageDetails)
+                self.errorRx.accept(nil)
             case .failure(let error):
-                print("error: \(error.localizedDescription)")
+                let errorString = "Metadata error: \(error.localizedDescription)"
+                self.errorRx.accept(errorString)
             }
         }
     }

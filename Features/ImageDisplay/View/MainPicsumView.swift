@@ -12,7 +12,7 @@ class MainPicsumView: UIView {
     private var padding: CGFloat = 16
     
     lazy var mainVStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [dateLabel, imageIdView, imageWidthView, imageHeightView, loadTimeView, mainImageView, authorNameView])
+        let stack = UIStackView(arrangedSubviews: [dateLabel, imageIdView, imageWidthView, imageHeightView, loadTimeView, mainImageView, authorNameView, errorLabel])
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis          = .vertical
         stack.spacing       = 8
@@ -25,6 +25,7 @@ class MainPicsumView: UIView {
     let dateLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.setContentHuggingPriority(.required, for: .vertical)
         label.text = " "
         label.textAlignment = .center
         label.textColor = .black
@@ -74,7 +75,18 @@ class MainPicsumView: UIView {
         view.label1.text = "Author name:"
         return view
     }()
-
+    let errorLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.setContentHuggingPriority(.required, for: .vertical)
+        label.text = ""
+        label.textAlignment = .left
+        label.textColor = .red
+        label.numberOfLines = 1
+        label.isHidden = true
+        return label
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.initLayout()

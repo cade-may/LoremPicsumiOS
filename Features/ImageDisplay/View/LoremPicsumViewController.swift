@@ -44,6 +44,7 @@ extension LoremPicsumViewController {
     private func initObservers() {
         self.observeDate()
         self.observeImage()
+        self.observeErrors()
         self.observeLoadTime()
         self.observeImageDetails()
     }
@@ -107,6 +108,22 @@ extension LoremPicsumViewController {
         }.disposed(by: self.disposeBag)
     }
     
+    private func observeErrors() {
+        self.viewModel.errorRx.subscribe { [weak self] errString in
+            guard let self = self else {return}
+            DispatchQueue.main.async {
+                if let errString = errString {
+                    self.mainPicsumView.errorLabel.text = errString
+                    self.mainPicsumView.errorLabel.isHidden = false
+                } else {
+                    self.mainPicsumView.errorLabel.isHidden = true
+                }
+            }
+
+        } onError: { err in
+            print(err.localizedDescription)
+        }.disposed(by: self.disposeBag)
+    }
 }
 
 // MARK: - actions
