@@ -82,7 +82,7 @@ class MainPicsumView: UIView {
         label.text = ""
         label.textAlignment = .left
         label.textColor = .red
-        label.numberOfLines = 1
+        label.numberOfLines = 2
         label.isHidden = true
         return label
     }()
