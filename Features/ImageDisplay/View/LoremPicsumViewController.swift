@@ -59,11 +59,11 @@ extension LoremPicsumViewController {
 extension LoremPicsumViewController {
     
     private func observeDate() {
-        self.viewModel.dateStringRx.subscribe { [weak self] dateString in
-            guard let self = self else {return}
+        self.viewModel.dateStringRx.subscribe { dateString in
             guard let dateString = dateString else {return}
-            DispatchQueue.main.async {
-                self.mainPicsumView.dateLabel.text = dateString
+            DispatchQueue.main.async { [weak self] in
+                guard let _self = self else {return}
+                _self.mainPicsumView.dateLabel.text = dateString
             }
         } onError: { err in
             print(err.localizedDescription)
@@ -72,10 +72,10 @@ extension LoremPicsumViewController {
     
     private func observeLoadTime() {
         self.viewModel.loadTimeRx.subscribe { [weak self] timeString in
-            guard let self = self else {return}
             guard let timeString = timeString else {return}
-            DispatchQueue.main.async {
-                self.mainPicsumView.loadTimeView.label2.text = timeString
+            DispatchQueue.main.async { [weak self] in
+                guard let _self = self else {return}
+                _self.mainPicsumView.loadTimeView.label2.text = timeString
             }
         } onError: { err in
             print(err.localizedDescription)
@@ -83,11 +83,11 @@ extension LoremPicsumViewController {
     }
     
     private func observeImageDetails() {
-        self.viewModel.imageDetailsRx.subscribe { [weak self] imageDetails in
-            guard let self = self else {return}
-            if let imageDetails = imageDetails {
-                DispatchQueue.main.async {
-                    self.mainPicsumView.setup(with: imageDetails)
+        self.viewModel.imageDetailsRx.subscribe { imageDetails in
+            DispatchQueue.main.async { [weak self] in
+                guard let _self = self else {return}
+                if let imageDetails = imageDetails {
+                    _self.mainPicsumView.setup(with: imageDetails)
                 }
             }
         } onError: { err in
@@ -97,11 +97,10 @@ extension LoremPicsumViewController {
     
     private func observeImage() {
         self.viewModel.imageRx.subscribe { [weak self] image in
-            guard let self = self else {return}
-            if let image = image {
-                DispatchQueue.main.async {
-                    self.mainPicsumView.mainImageView.image = image
-                }
+            guard let image = image else {return}
+            DispatchQueue.main.async { [weak self] in
+                guard let _self = self else {return}
+                _self.mainPicsumView.mainImageView.image = image
             }
         } onError: { err in
             print(err.localizedDescription)
@@ -109,14 +108,14 @@ extension LoremPicsumViewController {
     }
     
     private func observeErrors() {
-        self.viewModel.errorRx.subscribe { [weak self] errString in
-            guard let self = self else {return}
-            DispatchQueue.main.async {
+        self.viewModel.errorRx.subscribe { errString in
+            DispatchQueue.main.async { [weak self] in
+                guard let _self = self else {return}
                 if let errString = errString {
-                    self.mainPicsumView.errorLabel.text = errString
-                    self.mainPicsumView.errorLabel.isHidden = false
+                    _self.mainPicsumView.errorLabel.text = errString
+                    _self.mainPicsumView.errorLabel.isHidden = false
                 } else {
-                    self.mainPicsumView.errorLabel.isHidden = true
+                    _self.mainPicsumView.errorLabel.isHidden = true
                 }
             }
 
